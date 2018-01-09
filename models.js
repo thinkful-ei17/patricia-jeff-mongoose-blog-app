@@ -3,8 +3,6 @@
 const mongoose = require('mongoose');
 
 
-
-
 //Blog Schema
 const blogSchema = mongoose.Schema({
   title: { type: String, required: true },
@@ -12,7 +10,7 @@ const blogSchema = mongoose.Schema({
     firstName: String,
     lastName: String
   },
-  content: { type: String },
+  content: { type: String, required: true },
 });
 
 //Blog Virtuals
@@ -49,8 +47,8 @@ blogSchema.methods.serialize = function() {
   };
 };
 
-const blogs = mongoose.model('blogs', blogSchema);
+const Blog = mongoose.model('Blog', blogSchema);
 
 
 // module.exports = {Restaurant};
-module.exports = { blogs };
+module.exports = { Blog };

@@ -23,6 +23,7 @@ app.get('/blogs', (req, res) => {
   Blog
     .find()
     .then(blogs => {
+      console.log(blogs);
       res.json({
         blogs: blogs.map(
           (blog) => blog.serialize())
