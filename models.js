@@ -6,37 +6,16 @@ const mongoose = require('mongoose');
 
 
 //Blog Schema
-
-
-
-// this is our schema to represent a restaurant
-// const restaurantSchema = mongoose.Schema({
-//   name: {type: String, required: true},
-//   borough: {type: String, required: true},
-//   cuisine: {type: String, required: true},
-//   address: {
-//     building: String,
-//     // coord will be an array of string values
-//     coord: [String],
-//     street: String,
-//     zipcode: String
-//   },
-//   // grades will be an array of objects
-//   grades: [{
-//     date: Date,
-//     grade: String,
-//     score: Number
-//   }]
-// });
-
-
-
-
+const blogSchema = mongoose.Schema({
+  title: { type: String, required: true },
+  author: {
+    firstName: String,
+    lastName: String
+  },
+  content: { type: String },
+});
 
 //Blog Virtuals
-
-
-
 
 
 // *virtuals* (http://mongoosejs.com/docs/guide.html#virtuals)
@@ -61,23 +40,17 @@ const mongoose = require('mongoose');
 //Blog create and export model to be used in server.js
 
 
+blogSchema.methods.serialize = function() {
+  return {
+    id: this._id,
+    title: this.title,
+    author: this.author,
+    content: this.content,
+  };
+};
 
+const blogs = mongoose.model('blogs', blogSchema);
 
-//Restaurant ex of create/export model
-// restaurantSchema.methods.serialize = function() {
-
-//   return {
-//     id: this._id,
-//     name: this.name,
-//     cuisine: this.cuisine,
-//     borough: this.borough,
-//     grade: this.grade,
-//     address: this.addressString
-//   };
-// }
-
-// // note that all instance methods and virtual properties on our
-// // schema must be defined *before* we make the call to `.model`.
-// const Restaurant = mongoose.model('Restaurant', restaurantSchema);
 
 // module.exports = {Restaurant};
+module.exports = { blogs };
