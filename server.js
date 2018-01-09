@@ -11,7 +11,7 @@ mongoose.Promise = global.Promise;
 // config.js is where we control constants for entire
 // app like PORT and DATABASE_URL
 const { PORT, DATABASE_URL } = require('./config');
-const { Restaurant } = require('./models');
+
 const { Blog } = require('./models');
 
 const app = express();
@@ -36,42 +36,50 @@ app.get('/blogs', (req, res) => {
 });
 
 
-// Restaurants ex:
-// app.get('/restaurants', (req, res) => {
-//   Restaurant
-//     .find()
-//     // we're limiting because restaurants db has > 25,000
-//     // documents, and that's too much to process/return
-//     .limit(10)
-//     // success callback: for each restaurant we got back, we'll
-//     // call the `.serialize` instance method we've created in
-//     // models.js in order to only expose the data we want the API return.
-//     .then(restaurants => {
-//       res.json({
-//         restaurants: restaurants.map(
-//           (restaurant) => restaurant.serialize())
-//       });
-//     })
-//     .catch(err => {
-//       console.error(err);
-//       res.status(500).json({ message: 'Internal server error' });
-//     });
-// });
-
 // can also request by ID
-app.get('/restaurants/:id', (req, res) => {
-  Restaurant
+app.get('/blogs/:id', (req, res) => {
+  Blog
     // this is a convenience method Mongoose provides for searching
     // by the object _id property
     .findById(req.params.id)
-    .then(restaurant => res.json(restaurant.serialize()))
+    .then(blogs => res.json(blogs.serialize()))
     .catch(err => {
       console.error(err);
       res.status(500).json({ message: 'Internal server error' });
     });
 });
+// title: { type: String, required: true },
+//   author: {
+//     firstName: String,
+//     lastName: String
+//   },
+//   content: { type: String, required: true },
 
 
+app.post('/blogs', (req, res) => {
+  const requiredFields = ['title', 'content', 'author'];
+  for (let i = 0; i < requiredFields.length; i++) {
+    const field = requiredFields[i];
+    if (!(field in req.body)) {
+      const message = `Missing \`${field}\` in request body`;
+      console.error(message);
+      return res.status(400).send(message);
+    }
+  }
+
+  Blog
+    .create({
+      title: req.body.title,
+      firstName: req.body.author.firstName,
+      lastName: req.body.author.lastName,
+      content: req.body.content
+    }) //create
+    .then(blogs => res.status(201).json(blogs.serialize()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    });
+});
 //Post
 
 //Restaurants Example
@@ -148,7 +156,7 @@ app.get('/restaurants/:id', (req, res) => {
 
 
 // catch-all endpoint if client makes request to non-existent endpoint
-app.use('*', function (req, res) {
+app.use('*', function(req, res) {
   res.status(404).json({ message: 'Not Found' });
 });
 
@@ -161,7 +169,7 @@ let server;
 function runServer(databaseUrl = DATABASE_URL, port = PORT) {
 
   return new Promise((resolve, reject) => {
-    mongoose.connect(databaseUrl, {useMongoClient: true}, err => {
+    mongoose.connect(databaseUrl, { useMongoClient: true }, err => {
       if (err) {
         return reject(err);
       }
