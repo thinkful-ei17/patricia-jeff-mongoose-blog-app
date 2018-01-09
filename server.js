@@ -57,6 +57,8 @@ app.get('/blogs/:id', (req, res) => {
 
 
 app.post('/blogs', (req, res) => {
+
+  console.log(req.body);
   const requiredFields = ['title', 'content', 'author'];
   for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
@@ -70,8 +72,7 @@ app.post('/blogs', (req, res) => {
   Blog
     .create({
       title: req.body.title,
-      firstName: req.body.author.firstName,
-      lastName: req.body.author.lastName,
+      author: {firstName: req.body.author.firstName, lastName: req.body.author.lastName},
       content: req.body.content
     }) //create
     .then(blogs => res.status(201).json(blogs.serialize()))
