@@ -48,12 +48,6 @@ app.get('/blogs/:id', (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     });
 });
-// title: { type: String, required: true },
-//   author: {
-//     firstName: String,
-//     lastName: String
-//   },
-//   content: { type: String, required: true },
 
 
 app.post('/blogs', (req, res) => {
@@ -72,7 +66,7 @@ app.post('/blogs', (req, res) => {
   Blog
     .create({
       title: req.body.title,
-      author: {firstName: req.body.author.firstName, lastName: req.body.author.lastName},
+      author: { firstName: req.body.author.firstName, lastName: req.body.author.lastName },
       content: req.body.content
     }) //create
     .then(blogs => res.status(201).json(blogs.serialize()))
@@ -87,7 +81,7 @@ app.put('/blogs/:id', (req, res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
     const message = (
       `Request path id (${req.params.id}) and request body id ` +
-      `(${req.body.id}) must match`);
+            `(${req.body.id}) must match`);
     console.error(message);
     return res.status(400).json({ message: message });
   }
@@ -101,9 +95,9 @@ app.put('/blogs/:id', (req, res) => {
     }
 
     Blog
-      .findByIdAndUpdate(req.params.id, {$set: toUpdate})
+      .findByIdAndUpdate(req.params.id, { $set: toUpdate })
       .then(blog => res.status(204).end())
-      .catch(err => res.status(500).json({ message: 'Internal server error'}));
+      .catch(err => res.status(500).json({ message: 'Internal server error' }));
   });
 
 });
