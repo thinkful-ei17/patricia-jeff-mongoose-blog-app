@@ -12,12 +12,27 @@ mongoose.Promise = global.Promise;
 // app like PORT and DATABASE_URL
 const { PORT, DATABASE_URL } = require('./config');
 const { Restaurant } = require('./models');
+const { Blog } = require('./models');
 
 const app = express();
 app.use(bodyParser.json());
 
 // GET 
 
+app.get('/blogs', (req, res) => {
+  Blog
+    .find()
+    .then(blogs => {
+      res.json({
+        blogs: blogs.map(
+          (blog) => blog.serialize())
+      });
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    });
+});
 
 
 // Restaurants ex:
