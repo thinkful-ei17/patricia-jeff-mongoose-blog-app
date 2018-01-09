@@ -14,8 +14,14 @@ const blogSchema = mongoose.Schema({
 });
 
 //Blog Virtuals
+blogSchema.virtual('authorName').get(function() {
+  return `${this.author.firstName} ${this.author.lastName}`.trim();
+});
 
 
+blogSchema.virtual('createdDate').get(function() {
+  return new Date();
+});
 // *virtuals* (http://mongoosejs.com/docs/guide.html#virtuals)
 // allow us to define properties on our object that manipulate
 // properties that are stored in the database. Here we use it
@@ -37,13 +43,12 @@ const blogSchema = mongoose.Schema({
 
 //Blog create and export model to be used in server.js
 
-
 blogSchema.methods.serialize = function() {
   return {
-    id: this._id,
     title: this.title,
-    author: this.author,
     content: this.content,
+    author: this.authorName,
+    created: this.createdDate,
   };
 };
 
